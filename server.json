@@ -1,0 +1,14 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.on-munseo/on-geungeo",
+  "title": "On 근거",
+  "description": "Korean statutes verbatim from a copy of the national law database, plus citation checks",
+  "version": "1.0.0",
+  "websiteUrl": "https://github.com/on-munseo/on-geungeo",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://onmunseo.kr/mcp/law"
+    }
+  ]
+}

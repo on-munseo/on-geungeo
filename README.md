@@ -1,0 +1,290 @@
+<div align="center">
+
+# On 근거
+
+법령 조문을 법제처 현행 원문 그대로 찾아 주고, 글 속 법령 인용을 확인하는 원격 MCP 서버
+
+**한국어** · [English](README.en.md)
+
+`https://onmunseo.kr/mcp/law`
+
+</div>
+
+AI 가 법령을 말할 때 기억에 기대지 않고 원문을 확인하게 하는 도구입니다. 두 층으로 되어 있습니다.
+
+- **현행 법령 전체(5,600여 개):** 법령 이름 찾기, 조문 원문(조문 번호를 비우면 조문 목록), 문구 찾기, 글 속 인용 확인 — `law_…` 4개.
+- **의료·응급·보건·감염병·소방 등 법률 55개(시행령·시행규칙·별도 규칙·고시 포함):** 조문 깊이 보기(위임 조문·곧 시행될 개정·벌칙 요약·판례·해석례), 의무·기한·벌칙, 개정 이유·신구 대비, 연관 법률·법률 비교·용어 비교, 별표·서식, 미리 받아 둔 의료 분야 판례 3,527건·법령해석례 1,045건 — `med_…` 12개.
+
+법제처 현행 원문을 미리 받아 둔 사본에서 그대로 꺼내고, 결과 끝에 원문을 받은 날을 적습니다. 약칭(응급의료법·감염병예방법 등)으로 불러도 됩니다.
+
+이 저장소에는 연결 안내와 설정 파일만 있습니다(웹 화면 없음 — 화면에서 쓰려면 [On 문서 웹 편집기](https://onmunseo.kr/app/)). 서비스의 엔진·서버 코드는 공개하지 않습니다.
+
+**바로 가기:** [왜 쓰나](#쉽게-말하면--왜-쓰나) · [도구](#무엇을-하나) · [연결하기](#연결하기) · [쓰는 예](#쓰는-예) · [성능](#성능) · [손님과 열쇠](#손님과-열쇠) · [안전](#안전) · [알아 둘 점](#알아-둘-점)
+
+## 쉽게 말하면 — 왜 쓰나
+
+| 흔한 불편 | On 근거에서는 |
+|---|---|
+| AI 가 조문을 그럴듯하게 지어내거나 옛 조문을 말한다 | 법제처 원문 사본에서 그대로 꺼내고 받은 날을 적습니다 |
+| 공문 초안에 쓴 「법령」 제N조제K항 인용을 하나하나 찾아본다 | `law_check_citations` 가 없는 법령·없는 조·삭제된 조·없는 항·호, 조문 제목이 다른 곳을 짚습니다(AI 없이 규칙으로, 한 번에 40개까지) |
+| 조문 하나의 위임 조문·벌칙·곧 바뀔 개정을 따로 찾는다 | `med_article` 이 한 번에 보여 줍니다(의료·응급 법률 55개) |
+| 같은 말을 법마다 다르게 정의한다 | `med_terms`·`med_compare` 로 나란히 봅니다 |
+
+**이럴 땐 없이도 됩니다:** 사람이 법령 하나를 직접 볼 때는 국가법령정보센터(law.go.kr)에서 찾는 것이 가장 정확하고 최신입니다. 이 도구는 AI 가 원문을 확인하게 하려는 것입니다.
+
+## 무엇을 하나
+
+| 도구 | 이름 | 하는 일 | 손님 |
+|---|---|---|---|
+| `law_find` | 법령 이름 찾기 | 현행 법령(법률·시행령·시행규칙 등 5,600여 개) 이름을 낱말로(약칭 포함). 고시·훈령 같은 행정규칙은 이름만 | ○ |
+| `law_article` | 조문 원문 | 현행 법령 전체에서 조문 원문 그대로. 조문 번호를 비우면 조문 제목 목록 | ○ |
+| `law_search` | 문구 찾기 | 법령을 주면 그 법령 본문에서(띄어쓰기 무시), 비우면 전체 법령 이름·조문 제목에서 | ○ |
+| `law_check_citations` | 인용 확인 | 글 속 법령 인용을 현행 원문과 맞대어 없는 법령·조·항·호, 삭제된 조, 제목 다름을 짚음(한 번에 40개까지) | ○ |
+| `med_laws` | 법률 목록 | 다루는 의료·응급 법률을 분야별로(약칭 포함) | ○ |
+| `med_article` | 조문 깊이 보기 | 조문 원문 + 곧 시행될 개정 + 위임 조문 + 어기면(벌칙 요약) + 인용한 판례·해석례 | ○ |
+| `med_search` | 문구 찾기 | 목록의 법률·시행령·시행규칙·별도 규칙 원문에서 | ○ |
+| `med_duties` | 의무·기한·벌칙 | 한 조문의 의무·금지·기한 문장과 벌칙·과태료 조문, 처분 기준 별표 줄 | ○ |
+| `med_changes` | 개정 이유·신구 대비 | 최근 1년·시행 예정 개정, 개정이유(법제처 원문), 바뀐 글자 【 】 | ○ |
+| `med_upcoming` | 곧 시행될 개정 | 공포됐지만 아직 시행 전인 개정을 시행일 순으로 | ○ |
+| `med_related` | 연관 법률 | 법률끼리의 인용 관계, 조문을 주면 그 조문을 가져다 쓰는 다른 법 조문까지 | ○ |
+| `med_compare` | 법률 비교 | 같은 주제를 2~4개 법률에서 나란히 | ○ |
+| `med_terms` | 용어 비교 | 같은 용어를 법마다 어떻게 정의했는지 | ○ |
+| `med_checklist` | 의무 체크리스트 | 「누가」(법령에 쓰인 말 그대로)가 해야 할 일·하면 안 되는 일을 조문 줄로 | ○ |
+| `med_annex` | 별표·서식 | 별표·서식 목록과 본문, 낱말 둘레만도 | ○ |
+| `med_decisions` | 판례·법령해석례 | 미리 받아 둔 의료 분야 판례·해석례에서 찾기, id 를 주면 본문 | ○ |
+
+- 손님에게 보이는 도구 16개는 2026-11-26 운영 서버에 손님으로 `tools/list` 를 불러 확인했습니다.
+- 열쇠 권한과 상관없이 모든 열쇠와 손님이 씁니다. On 문서 전부 주소(`/mcp`)에도 같은 16개가 들어 있습니다.
+
+## 연결하기
+
+**Claude Code** — 터미널에 한 줄(`-s user` 는 모든 폴더에서 쓰기):
+
+```bash
+claude mcp add --transport http -s user on-geungeo https://onmunseo.kr/mcp/law
+```
+
+**Claude Code 플러그인** — 한 줄(Claude Code 2.1.275 이상):
+
+```bash
+claude plugin install on-geungeo --marketplace on-munseo/on-geungeo
+```
+
+어느 앱이든 등록한 그 대화에는 도구가 아직 붙지 않습니다. 앱을 한 번 다시 켜거나(Claude Code 터미널은 `/exit` 뒤 `claude`, VS Code 는 새 대화) 새 대화를 열면 그다음부터 씁니다. 열쇠가 없으면 로그인 단계는 건너뛰고 손님으로 씁니다.
+
+> 문서 도구 전부와 법령 원문(On 근거)을 함께 쓰려면 이 묶음 대신 `https://onmunseo.kr/mcp` 하나를 붙이세요(권장 — [On 문서](https://github.com/on-munseo/on-munseo.github.io)). 둘 다 붙이면 같은 도구가 두 번 보입니다.
+
+### Claude Code — 더 보기
+
+- 열쇠가 있으면 Claude Code 안에서 `/mcp` → `on-geungeo` → 인증(Authenticate)을 누르면 On 문서 로그인 창이 뜹니다. 열쇠를 넣으면 끝입니다.
+- 머리말로 넣으려면 `claude mcp add --transport http -s user on-geungeo https://onmunseo.kr/mcp/law --header "Authorization: Bearer <열쇠>"` 처럼 붙입니다. 이렇게 하면 열쇠가 설정 파일(`~/.claude.json`)에 남으니 로그인 창 쪽을 권합니다.
+- 플러그인을 두 줄로 붙이려면(옛 판): `claude plugin marketplace add on-munseo/on-geungeo` 다음 `claude plugin install on-geungeo@on-geungeo`. Claude Code 대화창에서는 `/plugin marketplace add on-munseo/on-geungeo` → `/plugin install on-geungeo@on-geungeo`.
+- 확인 `claude mcp list` · 빼기 `claude mcp remove on-geungeo`.
+
+### claude.ai · Claude 데스크톱(커넥터)
+
+설정 → 커넥터 → 「사용자 지정 커넥터 추가」(화면에 따라 「맞춤 커넥터 추가」)에서 이름 `On 근거`, 주소 `https://onmunseo.kr/mcp/law` 를 넣고 「연결」을 누릅니다. 열쇠가 있으면 뜨는 On 문서 로그인 창에 넣고, 없으면 손님으로 씁니다. 요금제·판에 따라 메뉴 이름이 다르거나 이 메뉴가 없을 수 있습니다.
+
+Claude 데스크톱을 설정 파일로 붙이려면 중계 도구 `mcp-remote` 를 씁니다(Node.js 필요). 맥 `~/Library/Application Support/Claude/claude_desktop_config.json` · 윈도우 `%APPDATA%\Claude\claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "on-geungeo": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://onmunseo.kr/mcp/law"
+      ]
+    }
+  }
+}
+```
+
+열쇠를 머리말로 넣으려면 `"args"` 끝에 `"--header", "Authorization:${ON_AUTH}"` 를 더하고 `"env": { "ON_AUTH": "Bearer <열쇠>" }` 를 둡니다(쌍점 뒤를 띄우지 않는 것은 윈도우에서 인자가 갈라지지 않게 하려는 것). 저장한 뒤 Claude 데스크톱을 다시 켭니다.
+
+### 챗GPT
+
+1. 설정 → 앱·커넥터 → 고급 설정에서 「개발자 모드」를 켭니다(화면 판에 따라 다를 수 있음).
+2. 「만들기」(사용자 MCP 서버 추가)에서 이름 `On 근거`, 주소 `https://onmunseo.kr/mcp/law`, 인증은 열쇠가 있으면 「OAuth」, 없으면 「없음」을 고릅니다.
+3. 연결할 때 뜨는 On 문서 로그인 창에 열쇠를 넣고, 대화 창의 도구(+) 메뉴에서 켭니다.
+
+- 챗GPT 에는 열쇠 대신 따로 만든 출입증이 갑니다(권한·하루 몫은 열쇠와 같음). 열쇠를 끊으면 출입증도 바로 막힙니다.
+
+### Cursor
+
+`~/.cursor/mcp.json`(모든 프로젝트) 또는 프로젝트의 `.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "on-geungeo": {
+      "url": "https://onmunseo.kr/mcp/law"
+    }
+  }
+}
+```
+
+Cursor 가 원격 MCP 로그인(OAuth)을 하지 못하는 판이면 `"headers": { "Authorization": "Bearer <열쇠>" }` 를 더합니다(열쇠가 파일에 남습니다).
+
+### VS Code
+
+작업 공간의 `.vscode/mcp.json`:
+
+```json
+{
+  "servers": {
+    "on-geungeo": {
+      "type": "http",
+      "url": "https://onmunseo.kr/mcp/law"
+    }
+  }
+}
+```
+
+열쇠를 머리말로 넣되 파일에 적지 않으려면, 처음 켤 때 묻게 합니다:
+
+```json
+{
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "on-key",
+      "description": "On 문서 열쇠",
+      "password": true
+    }
+  ],
+  "servers": {
+    "on-geungeo": {
+      "type": "http",
+      "url": "https://onmunseo.kr/mcp/law",
+      "headers": {
+        "Authorization": "Bearer ${input:on-key}"
+      }
+    }
+  }
+}
+```
+
+### 직접 불러 보기(curl)
+
+도구 목록(열쇠가 있으면 `-H "Authorization: Bearer <열쇠>"` 를 더함):
+
+```bash
+curl -s https://onmunseo.kr/mcp/law \
+  -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+```
+
+`law_article` 부르기 — 글에 따옴표·줄바꿈이 많으면 이렇게 파일로 보내면 깨지지 않습니다:
+
+```bash
+cat > call.json <<'EOF'
+{"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": "law_article", "arguments": {"law": "응급의료법", "jo": "제2조"}}}
+EOF
+curl -s https://onmunseo.kr/mcp/law \
+  -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" \
+  --data-binary @call.json
+```
+
+「응급의료에 관한 법률」 제2조(정의) 원문과, 끝 줄 「법제처 현행 법령(2026.11.14. 받음) 그대로 · 참고용」을 받았습니다(2026-11-26, 손님). 결과 `result.content` 의 글이 답입니다. 서버는 상태를 두지 않는 방식(Streamable HTTP, POST)이라 `initialize` 없이 `tools/call` 하나로 됩니다. 브라우저로 주소를 열면 안내 쪽이 보입니다.
+
+## 쓰는 예
+
+| 이렇게 말하면 | 이 도구가 |
+|---|---|
+| 「응급의료법 제2조 원문 보여 줘」 | `med_article` 또는 `law_article` |
+| 「이 공문 초안에 쓴 법령 인용이 맞는지 확인해 줘」 | `law_check_citations` |
+| 「감염병예방법에서 신고 의무와 어기면 받는 벌칙을 알려 줘」 | `med_duties` |
+| 「곧 시행되는 응급의료법 개정이 뭐야?」 | `med_upcoming` · `med_changes` |
+| 「구급차 규정을 응급의료법과 119구조구급법에서 나란히 보여 줘」 | `med_compare` |
+| 「개인정보 보호법 시행령에서 「가명정보」가 나오는 조문을 찾아 줘」 | `law_search` |
+
+AI 가 어느 도구를 부를지는 AI 가 정합니다. 위는 흔히 불리는 예입니다.
+
+## 성능
+
+법령 원문을 그대로 돌려주는 도구라 정확도 점수는 따로 내지 않습니다. 대신 담은 자료의 규모와 받은 날을 적습니다.
+
+| 자료 | 규모 | 받은 날(2026-11-26 에 결과로 확인) |
+|---|---|---|
+| 현행 법령 전체(법률·시행령·시행규칙 등) | 5,600여 개 | 2026.11.14.(`law_article` 결과 끝 줄) |
+| 의료·응급 법률(시행령·시행규칙·별도 규칙·고시 포함) | 55개 | 2026.11.23.(`med_article` 결과 끝 줄) |
+| 의료 분야 판례 · 법령해석례 | 3,527건 · 1,045건 | 미리 받아 둔 사본 |
+
+약한 곳: 미리 받아 둔 사본이라 그 뒤의 개정은 다음 사본 때 들어갑니다(받은 날은 결과 끝에 적힘). 고시·훈령 같은 행정규칙은 이름만 찾고, 본문은 의료·응급 법률에 딸린 것만 있습니다. 판례·해석례는 미리 받아 둔 의료 분야 것에서만 찾습니다. 결과는 참고용이며 최종 판단은 법령 원문과 담당 기관 해석으로 합니다.
+
+## 손님과 열쇠
+
+|  | 손님(열쇠 없음) | 열쇠 |
+|---|---|---|
+| 붙이는 법 | 인증 없이 주소만 붙임 | 연결할 때 뜨는 On 문서 로그인 창(OAuth)에 열쇠, 또는 `Authorization: Bearer <열쇠>` 머리말 |
+| 이 주소의 도구 | 16개 | 16개 |
+| 하루 몫 | 같은 인터넷 주소(IP)에서 하루 50번·1분에 6번 — On 문서의 모든 주소와 웹 화면을 합쳐 셈. 손님 전체의 하루 몫이 차면 한국 시간 자정까지 닫힘 | 열쇠마다 정해진 하루 몫과 동시에 처리하는 수 |
+| 열쇠가 있어야 하는 것 | — | 없음(모든 열쇠와 손님이 같은 16개를 씀) |
+
+- 열쇠 신청: `onmunseo.key [at] gmail.com`(제목에 「On 문서 열쇠 신청」). 쓰려는 곳(개인·업무·연구 등)과 필요한 묶음(예: On 근거)을 적어 주세요.
+- 틀린 열쇠·끊긴 열쇠는 **401**, 열쇠에 없는 묶음은 **403** 입니다. 짧은 사이에 몰아 부르면 「너무 자주 요청」(429)이 나니 1분쯤 뒤 다시 부릅니다.
+- 열쇠를 주소 뒤에 붙이지 마세요. 대화 기록과 접속 기록에 남습니다.
+
+## 안전
+
+1. **남기지 않습니다.** 보낸 글은 처리가 끝나면 버리고, 창구 기록에는 열쇠 별칭·도구 이름·보낸 크기·걸린 시간·성공 여부만 남깁니다.
+2. **원문을 그대로 돌려줍니다.** 조문·판례·해석례는 미리 받아 둔 사본에서 꺼내고 AI 가 고쳐 쓰지 않습니다. 인용 확인은 규칙으로 합니다.
+3. **공개 자료만 돌려줍니다.** 돌려주는 것은 법제처 국가법령정보센터의 공개 자료(법령·판례·법령해석례)뿐입니다.
+4. **대량 수집을 막습니다.** 결과를 긁어 모으려는 호출은 하루 동안 멈춥니다(아래 「알아 둘 점」).
+
+보안 문제는 [SECURITY.md](SECURITY.md)에 적힌 곳으로 알려 주세요.
+
+## 알아 둘 점
+
+- **무료 시범 서비스입니다.** 기능·하루 몫·주소는 바뀌거나 멈출 수 있습니다. 바뀌면 [CHANGELOG.md](CHANGELOG.md)에 적습니다.
+- **결과는 참고용입니다.** 결재 전에 사람이 확인해 주세요.
+- 결과가 12,000자를 넘으면 뒤를 자르고, 범위를 좁혀 다시 물어 달라고 알립니다.
+- 짧은 시간에 아주 많이 부르거나 한 법의 조문을 차례로 훑으면 그 열쇠(손님은 그 주소)의 On 근거 도구를 하루 동안 멈춥니다. 한 번에 2건씩 처리하고, 몰리면 차례를 기다립니다.
+- On 근거 도구도 같은 하루 몫으로 셉니다.
+- 인터넷으로만 씁니다. 업무망(폐쇄망)에서는 쓸 수 없습니다.
+- 앱마다 메뉴 이름과 판이 달라 화면이 위 설명과 다를 수 있습니다. 안 되면 [SUPPORT.md](SUPPORT.md)를 봐 주세요.
+
+## 이용 조건·개인정보·고지
+
+- 결과를 대량으로 모으거나 다른 AI 모델 학습에 쓰는 것은 금지합니다. 자동화로 남용하면(한도를 넘기려 열쇠 여러 개 쓰기, 쉬지 않고 계속 부르기, 결과 긁어 모으기 등) 미리 알리지 않고 열쇠를 끊습니다. 엔진·규칙·코드를 꺼내 가거나 거꾸로 풀어내는 것은 허락하지 않습니다.
+- 요약은 [MCP 안내의 이용 조건](https://github.com/on-munseo/on-munseo.github.io/blob/main/MCP.md#5-이용-조건약관-요약), 전문은 [이용약관](https://onmunseo.kr/terms)·[개인정보 처리방침](https://onmunseo.kr/privacy)에 있습니다.
+- On 근거가 돌려주는 법령·판례·법령해석례 원문은 법제처 국가법령정보센터의 공개 자료입니다.
+- Claude·ChatGPT·Cursor·VS Code 등 이름은 각 권리자의 것이며 연결 방법을 알리려고만 씁니다. 고지 전문은 [MCP 안내의 고지](https://github.com/on-munseo/on-munseo.github.io/blob/main/MCP.md#고지)에 있습니다.
+
+## 말 풀이
+
+- **MCP** — AI 도구가 바깥 도구를 부르는 공개 규약(Model Context Protocol). 이 주소를 MCP 서버로 붙이면 AI 가 대화 안에서 이 도구들을 부릅니다.
+- **원격 MCP 서버** — 내 컴퓨터에 깔지 않고 인터넷 주소로 붙는 MCP 서버. 설치할 프로그램이 없습니다.
+- **묶음 주소** — On 문서의 기능 하나만 담은 주소(`/mcp/text` 등). 전부는 `/mcp` 입니다.
+- **열쇠** — On 문서가 주는 사용 권한 값. 하루 몫과 쓸 수 있는 묶음이 정해져 있습니다. 남에게 보이면 안 됩니다.
+- **손님** — 열쇠 없이 쓰는 것. 도구 일부와 작은 하루 몫으로 바로 씁니다.
+- **OAuth(로그인 창)** — 연결할 때 뜨는 On 문서 로그인 창에 열쇠를 넣는 방식. 앱에는 열쇠 대신 따로 만든 출입증이 갑니다.
+- **위임 조문** — 법률이 「대통령령으로 정한다」처럼 아래 법령에 맡긴 내용을 실제로 정한 시행령·시행규칙 조문.
+- **신구 대비** — 개정 전과 뒤의 조문을 나란히 놓고 바뀐 글자를 표시한 것.
+- **법령해석례** — 법제처가 법령의 뜻을 묻는 질의에 답한 해석.
+- **행정규칙** — 고시·훈령·예규처럼 행정 기관이 정한 규칙.
+
+## On 문서의 다른 묶음
+
+| 제품 | 저장소 | 주소(앞에 `https://onmunseo.kr`) |
+|---|---|---|
+| **On 문서(전부)** | [on-munseo.github.io](https://github.com/on-munseo/on-munseo.github.io) — 웹 편집기와 MCP 전부 | `/mcp` |
+| On 글꺼내기 | [on-text](https://github.com/on-munseo/on-text) | `/mcp/text` |
+| On 결재점검 | [on-check](https://github.com/on-munseo/on-check) | `/mcp/check` |
+| On 개인정보 가리기 | [on-mask](https://github.com/on-munseo/on-mask) | `/mcp/mask` |
+| On HWPX 만들기 | [on-hwpx](https://github.com/on-munseo/on-hwpx) | `/mcp/hwpx` |
+| On 공문서 쓰기 | [on-gov](https://github.com/on-munseo/on-gov) | `/mcp/gov` |
+| On 글 다듬기 | [on-tidy](https://github.com/on-munseo/on-tidy) | `/mcp/tidy` |
+| On 근거 | 이 저장소 | `/mcp/law` |
+| On폭 글꼴 | [napurrin/onpok-fonts](https://github.com/napurrin/onpok-fonts) — 무료 글꼴(SIL OFL 1.1) | — |
+
+## 라이선스
+
+글은 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.ko), 설정 파일(`server.json`·`.claude-plugin/`·`plugin/`)은 MIT 입니다. 「On 문서」·「On 근거」 이름과 로고는 이 허락에 들어가지 않습니다. 서비스의 엔진·서버 코드는 이 저장소에 없고 공개하지 않습니다. 전문은 [LICENSE](LICENSE)에 있습니다.
+
+---
+
+만든 사람: [napurrin](https://github.com/napurrin) — 혼자 만들고 고칩니다.
