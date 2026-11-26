@@ -19,7 +19,12 @@ Text comes verbatim from a stored copy of the official national law database (�
 
 This repository holds only the setup guide and configuration files (there is no web page here — to use a screen, open the [On 문서 web editor](https://onmunseo.kr/app/)). The engine and server code of the service are not public. The service and its tools speak Korean.
 
-**Jump to:** [Why](#in-short--why-use-it) · [Tools](#what-it-does) · [Connect](#connect) · [Examples](#examples) · [Measured results](#measured-results) · [Guest and key](#guest-and-key) · [Safety](#safety) · [Good to know](#good-to-know)
+## Comparing with other tools
+
+- **What this server is for:** statutes returned verbatim from a copy of the official national law database; for 55 medical, emergency, public-health and fire-service laws it links delegated provisions, upcoming amendments, reasons for amendments, old/new comparisons, duties and penalties, annexes, 3,527 medical court cases and 1,045 statutory interpretations; it checks statute citations in a text (missing laws, articles, paragraphs or items, deleted articles, wrong article titles) without AI (`law_check_citations`).
+- **Where a statute-lookup MCP that calls the national law API in real time goes further:** local ordinances, the body of administrative rules, and court cases outside medicine. This server uses a downloaded copy, so later amendments arrive with the next copy (the download date is shown at the end of each result).
+
+**Jump to:** [Comparing](#comparing-with-other-tools) · [Why](#in-short--why-use-it) · [Tools](#what-it-does) · [Connect](#connect) · [Examples](#examples) · [Measured results](#measured-results) · [Guest and key](#guest-and-key) · [Safety](#safety) · [Good to know](#good-to-know)
 
 ## In short — why use it
 
@@ -111,6 +116,17 @@ To send a key as a header, append `"--header", "Authorization:${ON_AUTH}"` to `"
 3. Enter your key on the On 문서 sign-in page, then turn the connector on from the tools (+) menu of a chat.
 
 - ChatGPT receives a separate pass instead of your key (same permissions and daily quota). Revoking the key blocks the pass at once.
+
+### Codex
+
+Without a key, add two lines to `~/.codex/config.toml`:
+
+```toml
+[mcp_servers.on-geungeo]
+url = "https://onmunseo.kr/mcp/law"
+```
+
+- `codex mcp add` opens the On 문서 sign-in window right away. With a key, enter it there; without one, close it (Ctrl-C) and use the two lines above.
 
 ### Cursor
 
@@ -221,7 +237,7 @@ Weak spots: this is a stored copy, so later amendments arrive with the next copy
 |---|---|---|
 | How to connect | Add the URL with no authentication | Enter the key on the On 문서 sign-in page (OAuth), or send `Authorization: Bearer <key>` |
 | Tools at this endpoint | 16 | 16 |
-| Daily quota | 50 calls a day and 6 a minute per internet address (IP), counted across all On 문서 endpoints and the web editor. When the shared guest quota for the day runs out, guest access closes until midnight Korea time | A daily quota and concurrency limit set per key |
+| Daily quota | 50 calls a day and 6 a minute (the statute tools `law_`·`med_` have their own 100 a day and 20 a minute) per internet address (IP), counted across all On 문서 endpoints and the web editor. When the shared guest quota for the day runs out, guest access closes until midnight Korea time | A daily quota and concurrency limit set per key |
 | Needs a key | — | none (every key and guest gets the same 16 tools) |
 
 - To get a key, write to `onmunseo.key [at] gmail.com` (subject “On 문서 열쇠 신청”), with what you will use it for and which bundle you need (e.g. On 근거).
