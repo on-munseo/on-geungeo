@@ -10,6 +10,34 @@
 
 </div>
 
+<!-- ai-install -->
+## AI 에게 — 이 저장소를 설치하려면
+
+내려받거나 빌드할 것은 없습니다. 원격 MCP 서버 주소 `https://onmunseo.kr/mcp/law` 하나를 쓰는 AI 도구에 **사용자 범위**로 등록하면 끝입니다. **열쇠(로그인)는 없어도 됩니다** — 로그인 단계는 건너뛰고 손님으로 바로 씁니다. 쓰는 도구의 한 줄만 실행하세요.
+
+- **Claude Code**
+  ```bash
+  claude mcp add --transport http -s user on-geungeo https://onmunseo.kr/mcp/law
+  ```
+- **Codex** — 설정 파일(`~/.codex/config.toml`)에 두 줄을 더합니다(이미 있으면 건너뜀). `codex mcp add --url` 은 쓰지 마세요 — 곧바로 브라우저 로그인 창을 띄웁니다.
+  ```bash
+  C="${CODEX_HOME:-$HOME/.codex}"; mkdir -p "$C"; touch "$C/config.toml"; if ! (cd / && codex mcp get on-geungeo >/dev/null 2>&1); then if cp "$C/config.toml" "$C/config.toml.bak-on-geungeo"; then printf '\n[mcp_servers.on-geungeo]\nurl = "https://onmunseo.kr/mcp/law"\n' >> "$C/config.toml"; (cd / && codex mcp get on-geungeo >/dev/null 2>&1) || { cp "$C/config.toml.bak-on-geungeo" "$C/config.toml"; echo "자동으로 더하지 못했습니다 — config.toml 에 손으로 더해 주세요"; }; else echo "백업을 만들지 못해 그만둡니다 — config.toml 은 그대로입니다"; fi; fi; (cd / && codex mcp get on-geungeo)
+  ```
+  윈도우이거나 명령 줄 `codex` 가 없는 곳(IDE 확장만)은 그 파일 끝에 `[mcp_servers.on-geungeo]`·`url = "https://onmunseo.kr/mcp/law"` 두 줄을 손으로 더합니다(파일에 `mcp_servers = { … }` 한 줄 표가 이미 있으면 그 안에 `on-geungeo = { url = "https://onmunseo.kr/mcp/law" }` 를 더함).
+- **Cursor** — `~/.cursor/mcp.json` 의 `"mcpServers"` 에 한 줄을 더합니다(이미 있는 서버는 그대로). 사람은 [Cursor 에 붙이기](https://cursor.com/install-mcp?name=on-geungeo&config=eyJ1cmwiOiJodHRwczovL29ubXVuc2VvLmtyL21jcC9sYXcifQ%3D%3D).
+  ```json
+  "on-geungeo": { "url": "https://onmunseo.kr/mcp/law" }
+  ```
+- **VS Code** — 사람은 [VS Code 에 붙이기](https://insiders.vscode.dev/redirect/mcp/install?name=on-geungeo&config=%7B%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fonmunseo.kr%2Fmcp%2Flaw%22%7D).
+  ```bash
+  code --add-mcp '{"name":"on-geungeo","type":"http","url":"https://onmunseo.kr/mcp/law"}'
+  ```
+- **Claude 데스크톱·claude.ai** — 사람이 화면에서: 설정 → 커넥터 → 맞춤 커넥터 추가 → 이름 `On 근거`, 주소 `https://onmunseo.kr/mcp/law` → 「연결」.
+
+등록한 그 대화에는 도구가 아직 붙지 않습니다. 끝나면 사용자에게 「도구를 한 번 다시 켜거나 새 대화를 열면 On 근거 도구가 보입니다」라고 알려 주세요. `claude mcp list`(Codex 는 `codex mcp list`) 목록에 `on-geungeo` 줄이 있으면 등록된 것입니다. 자세한 순서: [llms-install.md](llms-install.md)
+
+<!-- ai-install -->
+
 AI 가 법령을 말할 때 기억에 기대지 않고 원문을 확인하게 하는 도구입니다. 두 층으로 되어 있습니다.
 
 - **현행 법령 전체(5,600여 개):** 법령 이름 찾기, 조문 원문(조문 번호를 비우면 조문 목록), 문구 찾기, 글 속 인용 확인 — `law_…` 4개.
@@ -24,7 +52,7 @@ AI 가 법령을 말할 때 기억에 기대지 않고 원문을 확인하게 �
 - **이 묶음의 몫:** 법제처 현행 원문 사본의 조문을 그대로 주고, 의료·응급·보건·소방 법률 55개는 위임 조문·곧 시행될 개정·개정 이유·신구 대비·의무와 벌칙·별표·의료 분야 판례 3,527건·법령해석례 1,045건을 한 번에 잇습니다. 글 속 법령 인용(없는 법령·조·항·호, 삭제된 조, 다른 조문 제목)을 AI 없이 짚습니다(`law_check_citations`).
 - **다른 법령 조회 MCP 가 더 넓은 곳:** 법제처 API 를 실시간으로 부르는 법령 조회 MCP 는 자치법규·행정규칙 본문·의료 밖 판례까지 넓게 찾습니다. 이 묶음은 미리 받은 사본이라 그 뒤의 개정은 다음 사본 때 들어갑니다(받은 날은 결과 끝에).
 
-**바로 가기:** [다른 도구와 견줄 때](#다른-도구와-견줄-때) · [왜 쓰나](#쉽게-말하면--왜-쓰나) · [도구](#무엇을-하나) · [연결하기](#연결하기) · [쓰는 예](#쓰는-예) · [성능](#성능) · [손님과 열쇠](#손님과-열쇠) · [안전](#안전) · [알아 둘 점](#알아-둘-점)
+**바로 가기:** [AI 에게 — 설치](#ai-에게--이-저장소를-설치하려면) · [다른 도구와 견줄 때](#다른-도구와-견줄-때) · [왜 쓰나](#쉽게-말하면--왜-쓰나) · [도구](#무엇을-하나) · [연결하기](#연결하기) · [쓰는 예](#쓰는-예) · [성능](#성능) · [손님과 열쇠](#손님과-열쇠) · [안전](#안전) · [알아 둘 점](#알아-둘-점)
 
 ## 쉽게 말하면 — 왜 쓰나
 
@@ -126,7 +154,13 @@ Claude 데스크톱을 설정 파일로 붙이려면 중계 도구 `mcp-remote` 
 url = "https://onmunseo.kr/mcp/law"
 ```
 
-- `codex mcp add` 로 더하면 곧바로 On 문서 로그인 창을 엽니다. 열쇠가 있으면 그 창에 열쇠를 넣고, 없으면 창을 닫고(Ctrl-C) 위 두 줄로 씁니다.
+- 열쇠가 없으면 `codex mcp add --url` 은 쓰지 마세요 — 곧바로 On 문서 로그인 창(브라우저)을 엽니다. 위 두 줄을 터미널 한 줄로 더하려면(이미 있으면 건너뜀):
+
+  ```bash
+  C="${CODEX_HOME:-$HOME/.codex}"; mkdir -p "$C"; touch "$C/config.toml"; if ! (cd / && codex mcp get on-geungeo >/dev/null 2>&1); then if cp "$C/config.toml" "$C/config.toml.bak-on-geungeo"; then printf '\n[mcp_servers.on-geungeo]\nurl = "https://onmunseo.kr/mcp/law"\n' >> "$C/config.toml"; (cd / && codex mcp get on-geungeo >/dev/null 2>&1) || { cp "$C/config.toml.bak-on-geungeo" "$C/config.toml"; echo "자동으로 더하지 못했습니다 — config.toml 에 손으로 더해 주세요"; }; else echo "백업을 만들지 못해 그만둡니다 — config.toml 은 그대로입니다"; fi; fi; (cd / && codex mcp get on-geungeo)
+  ```
+
+- 열쇠가 있으면 위 두 줄을 넣은 뒤 로그인합니다: `codex mcp login on-geungeo`
 
 ### Cursor
 

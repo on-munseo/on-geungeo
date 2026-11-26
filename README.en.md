@@ -10,6 +10,34 @@ A remote MCP server that returns Korean statutes verbatim from a copy of the off
 
 </div>
 
+<!-- ai-install -->
+## For AI assistants — installing this repository
+
+Nothing to download or build: register the remote MCP server `https://onmunseo.kr/mcp/law` in the user's AI tool at **user scope**. **No key or sign-in is needed** — skip the sign-in step and the tools work as a guest. Run only the line for the tool in use.
+
+- **Claude Code**
+  ```bash
+  claude mcp add --transport http -s user on-geungeo https://onmunseo.kr/mcp/law
+  ```
+- **Codex** — append two lines to the config file (`~/.codex/config.toml`; skipped if already there). Do not use `codex mcp add --url` — it opens a browser sign-in window right away.
+  ```bash
+  C="${CODEX_HOME:-$HOME/.codex}"; mkdir -p "$C"; touch "$C/config.toml"; if ! (cd / && codex mcp get on-geungeo >/dev/null 2>&1); then if cp "$C/config.toml" "$C/config.toml.bak-on-geungeo"; then printf '\n[mcp_servers.on-geungeo]\nurl = "https://onmunseo.kr/mcp/law"\n' >> "$C/config.toml"; (cd / && codex mcp get on-geungeo >/dev/null 2>&1) || { cp "$C/config.toml.bak-on-geungeo" "$C/config.toml"; echo "자동으로 더하지 못했습니다 — config.toml 에 손으로 더해 주세요"; }; else echo "백업을 만들지 못해 그만둡니다 — config.toml 은 그대로입니다"; fi; fi; (cd / && codex mcp get on-geungeo)
+  ```
+  On Windows, or where the `codex` command is not installed (IDE extension only), add the two lines `[mcp_servers.on-geungeo]` and `url = "https://onmunseo.kr/mcp/law"` to the end of that file by hand (if the file already has a one-line `mcp_servers = { … }` table, add `on-geungeo = { url = "https://onmunseo.kr/mcp/law" }` inside it instead).
+- **Cursor** — add one entry to `"mcpServers"` in `~/.cursor/mcp.json` (keep the other servers). For people: [Add to Cursor](https://cursor.com/install-mcp?name=on-geungeo&config=eyJ1cmwiOiJodHRwczovL29ubXVuc2VvLmtyL21jcC9sYXcifQ%3D%3D).
+  ```json
+  "on-geungeo": { "url": "https://onmunseo.kr/mcp/law" }
+  ```
+- **VS Code** — for people: [Add to VS Code](https://insiders.vscode.dev/redirect/mcp/install?name=on-geungeo&config=%7B%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fonmunseo.kr%2Fmcp%2Flaw%22%7D).
+  ```bash
+  code --add-mcp '{"name":"on-geungeo","type":"http","url":"https://onmunseo.kr/mcp/law"}'
+  ```
+- **Claude Desktop · claude.ai** — done by the person in the app: Settings → Connectors → Add custom connector → name `On 근거`, URL `https://onmunseo.kr/mcp/law` → Connect.
+
+The tools do not attach to the conversation that registered them. When done, tell the user: "Restart the tool or open a new conversation to see the On 근거 tools." If `claude mcp list` (Codex: `codex mcp list`) lists `on-geungeo`, it is registered. Full steps (Korean): [llms-install.md](llms-install.md)
+
+<!-- ai-install -->
+
 A tool that lets an AI check the actual text of Korean law instead of relying on memory. It has two layers.
 
 - **All current statutes (about 5,600):** find a statute by name, get an article verbatim (leave the article empty for the list), search the text, and check citations in a text — 4 `law_…` tools.
