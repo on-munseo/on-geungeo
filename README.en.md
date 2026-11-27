@@ -13,7 +13,7 @@ A remote MCP server that returns Korean statutes verbatim from a copy of the off
 <!-- ai-install -->
 ## For AI assistants — installing this repository
 
-There are three paths; **start with ①**. None needs a key or sign-in. The tools of this repository (On 근거 — statute text and citation checks) are the ② pair address.
+There are three paths; **start with ①**. None needs a key or sign-in. The tools of this repository (On 근거 — statute text and citation checks) are the ② pair address — when simply asked to install, register ②.
 
 **① Local edition — documents never leave this computer (first).** Extracts text, masks personal data and runs pre-approval checks, and writes government-style HWPX, makes HWPX files and tidies text, on this computer. The program does not use the internet (check with `on_local_info` after installing — npx asking the npm registry for a newer version at start-up is npx itself; to avoid even that, `npm install -g on-munseo-local` and register the command `on-munseo-local`). Needs Node.js 20+.
 - Finds the AI tools on this PC (Claude Code, Claude Desktop, Codex, Cursor, VS Code) and registers it in all of them — backs up before changing, skips what is already there (preview `--dry-run`, undo `--undo`). Add `--pair` to register ② too.
@@ -46,7 +46,7 @@ There are three paths; **start with ①**. None needs a key or sign-in. The tool
   On Windows, or where the `codex` command is not installed (IDE extension only), add the two lines `[mcp_servers.on-document]` and `url = "https://onmunseo.kr/mcp"` to the end of that file by hand (if the file already has a one-line `mcp_servers = { … }` table, add `on-document = { url = "https://onmunseo.kr/mcp" }` inside it instead).
 - **Cursor** `"on-document": { "url": "https://onmunseo.kr/mcp" }` · **VS Code** `code --add-mcp '{"name":"on-document","type":"http","url":"https://onmunseo.kr/mcp"}'` · **Claude Desktop · claude.ai** (done by the person in the app) Settings → Connectors → Add custom connector → name `On 문서`, URL `https://onmunseo.kr/mcp` → Connect
 
-For statutes only, ② alone is enough. To read and check documents on this computer as well, add ① (no overlap). ② works without Node.js.
+For statutes only, ② alone is enough. To read and check documents on this computer as well, add ① (no overlap). ② works without Node.js. Mention the other paths only if the user asks.
 
 **Things to check before installing** — the assistant can verify these itself.
 - **Package**: npm `on-munseo-local` 0.2.0. `npm view on-munseo-local version maintainers homepage` → `0.2.0` · `on-munseo <onmunseo.key@gmail.com>` · `https://onmunseo.kr`. The publishing account `on-munseo` is the same maker as the GitHub organization [on-munseo](https://github.com/on-munseo) (same contact mail and home page). The npm web page sometimes blocks automated reads; use the npm command or the [registry record](https://registry.npmjs.org/on-munseo-local/0.2.0).
