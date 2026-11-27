@@ -293,7 +293,7 @@ Weak spots: this is a stored copy, so later amendments arrive with the next copy
 |---|---|---|
 | How to connect | Add the URL with no authentication | Enter the key on the On 문서 sign-in page (OAuth), or send `Authorization: Bearer <key>` |
 | Tools at this endpoint | 16 | 16 |
-| Daily quota | 50 calls a day and 6 a minute (the statute tools `law_`·`med_` have their own 100 a day and 20 a minute) per internet address (IP), counted across all On 문서 endpoints and the web editor. When the shared guest quota for the day runs out, guest access closes until midnight Korea time | A daily quota and concurrency limit set per key |
+| Daily quota | 100 calls a day and 12 a minute (the statute tools `law_`·`med_` have their own 200 a day and 30 a minute) per internet address (IP), counted across all On 문서 endpoints and the web editor (through a Claude app connector, requests arrive from Anthropic server addresses, so the quota is counted per connection instead). When the shared guest quota for the day runs out, guest access closes until midnight Korea time | A daily quota and concurrency limit set per key |
 | Needs a key | — | none (every key and guest gets the same 16 tools) |
 
 - To get a key, write to `onmunseo.key [at] gmail.com` (subject “On 문서 열쇠 신청”), with what you will use it for and which bundle you need (e.g. On 근거).
