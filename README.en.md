@@ -10,8 +10,32 @@ A remote MCP server that returns Korean statutes verbatim from a copy of the off
 
 </div>
 
+A tool that lets an AI check the actual text of Korean law instead of relying on memory. It has two layers.
+
+- **All current statutes (about 5,600):** find a statute by name, get an article verbatim (leave the article empty for the list), search the text, and check citations in a text — 4 `law_…` tools.
+- **55 statutes on medical care, emergency care, public health, infectious disease, fire services and related fields (with their decrees, rules, separate rules and notices):** an article in depth (delegated provisions, upcoming amendments, penalties, court cases and interpretations), duties and penalties, amendment reasons and old/new text, related statutes and comparisons, term definitions, annexes and forms, and 3,527 stored medical-field court cases and 1,045 statutory interpretations — 12 `med_…` tools.
+
+Text comes verbatim from a stored copy of the official national law database (법제처 국가법령정보센터), and every result ends with the date the copy was taken. Common abbreviations (응급의료법, 감염병예방법 …) work.
+
+This repository holds only the setup guide and configuration files (including one small plugin launcher) (there is no web page here — to use a screen, open the [On 문서 web editor](https://onmunseo.kr/app/)). The engine and server code of the service are not public. The service and its tools speak Korean.
+
+- **What this server is for:** statutes returned verbatim from a copy of the official national law database; for 55 medical, emergency, public-health and fire-service laws it links delegated provisions, upcoming amendments, reasons for amendments, old/new comparisons, duties and penalties, annexes, 3,527 medical court cases and 1,045 statutory interpretations; it checks statute citations in a text (missing laws, articles, paragraphs or items, deleted articles, wrong article titles) without AI (`law_check_citations`).
+
+**Jump to:** [Why](#in-short--why-use-it) · [Install](#installation-guide-for-people-and-ai-assistants) · [Measured results](#measured-results) · [Tools](#what-it-does) · [Connect](#connect) · [Examples](#examples) · [Guest and key](#guest-and-key) · [Safety](#safety) · [Good to know](#good-to-know) · [Comparisons (reference)](#measurements-and-comparisons-reference)
+
+## In short — why use it
+
+| Common pain | With On 근거 |
+|---|---|
+| An AI makes up plausible articles or quotes old versions | Text comes verbatim from a copy of the official database, with the date it was taken |
+| You look up every “Act, Article N(K)” citation in a draft by hand | `law_check_citations` flags missing statutes, articles, paragraphs or items, deleted articles and wrong titles (rule-based, up to 40 at a time) |
+| You search separately for an article’s delegated provisions, penalties and upcoming changes | `med_article` shows them together (for the 55 medical and emergency statutes) |
+| The same term is defined differently in different statutes | See them side by side with `med_terms` and `med_compare` |
+
+**When you do not need it:** When a person reads a single statute, the national law database (law.go.kr) is the most accurate and up to date. This tool exists so that an AI checks the original text.
+
 <!-- ai-install -->
-## For AI assistants — installing this repository
+## Installation guide (for people and AI assistants)
 
 There are three paths; **start with ①**. None needs a key or sign-in. The tools of this repository (On 근거 — statute text and citation checks) are the ② pair address — when simply asked to install, register ②. `plugin/` (the Claude Code plugin) adds ① and ② together, and `server.json` (for the official MCP registry) lists ②.
 
@@ -64,32 +88,17 @@ The tools do not attach to the conversation that registered them. When done, tel
 
 <!-- ai-install -->
 
-A tool that lets an AI check the actual text of Korean law instead of relying on memory. It has two layers.
+## Measured results
 
-- **All current statutes (about 5,600):** find a statute by name, get an article verbatim (leave the article empty for the list), search the text, and check citations in a text — 4 `law_…` tools.
-- **55 statutes on medical care, emergency care, public health, infectious disease, fire services and related fields (with their decrees, rules, separate rules and notices):** an article in depth (delegated provisions, upcoming amendments, penalties, court cases and interpretations), duties and penalties, amendment reasons and old/new text, related statutes and comparisons, term definitions, annexes and forms, and 3,527 stored medical-field court cases and 1,045 statutory interpretations — 12 `med_…` tools.
+The tool returns the law text as is, so there is no accuracy score. Below are the size of the stored data and the dates the copies were taken.
 
-Text comes verbatim from a stored copy of the official national law database (법제처 국가법령정보센터), and every result ends with the date the copy was taken. Common abbreviations (응급의료법, 감염병예방법 …) work.
+| Data | Size | Copy taken (checked in results on 2026-11-26) |
+|---|---|---|
+| All current statutes (acts, decrees, rules) | about 5,600 | 2026-11-14 (from the last line of a `law_article` result) |
+| Medical and emergency statutes (with decrees, rules and notices) | 55 | 2026-11-23 (from the last line of a `med_article` result) |
+| Medical-field court cases · statutory interpretations | 3,527 · 1,045 | stored copy |
 
-This repository holds only the setup guide and configuration files (including one small plugin launcher) (there is no web page here — to use a screen, open the [On 문서 web editor](https://onmunseo.kr/app/)). The engine and server code of the service are not public. The service and its tools speak Korean.
-
-## Comparing with other tools
-
-- **What this server is for:** statutes returned verbatim from a copy of the official national law database; for 55 medical, emergency, public-health and fire-service laws it links delegated provisions, upcoming amendments, reasons for amendments, old/new comparisons, duties and penalties, annexes, 3,527 medical court cases and 1,045 statutory interpretations; it checks statute citations in a text (missing laws, articles, paragraphs or items, deleted articles, wrong article titles) without AI (`law_check_citations`).
-- **Where a statute-lookup MCP that calls the national law API in real time goes further:** local ordinances, the body of administrative rules, and court cases outside medicine. This server uses a downloaded copy, so later amendments arrive with the next copy (the download date is shown at the end of each result).
-
-**Jump to:** [Comparing](#comparing-with-other-tools) · [Why](#in-short--why-use-it) · [Tools](#what-it-does) · [Connect](#connect) · [Examples](#examples) · [Measured results](#measured-results) · [Guest and key](#guest-and-key) · [Safety](#safety) · [Good to know](#good-to-know)
-
-## In short — why use it
-
-| Common pain | With On 근거 |
-|---|---|
-| An AI makes up plausible articles or quotes old versions | Text comes verbatim from a copy of the official database, with the date it was taken |
-| You look up every “Act, Article N(K)” citation in a draft by hand | `law_check_citations` flags missing statutes, articles, paragraphs or items, deleted articles and wrong titles (rule-based, up to 40 at a time) |
-| You search separately for an article’s delegated provisions, penalties and upcoming changes | `med_article` shows them together (for the 55 medical and emergency statutes) |
-| The same term is defined differently in different statutes | See them side by side with `med_terms` and `med_compare` |
-
-**When you do not need it:** When a person reads a single statute, the national law database (law.go.kr) is the most accurate and up to date. This tool exists so that an AI checks the original text.
+Weak spots: this is a stored copy, so later amendments arrive with the next copy (the date is at the end of every result). Administrative rules such as notices and directives can be found by name only; their text is included only where attached to the medical and emergency statutes. Court cases and interpretations come only from the stored medical-field set. Results are for reference; the final word belongs to the official text and the responsible authority’s interpretation.
 
 ## What it does
 
@@ -117,7 +126,7 @@ This repository holds only the setup guide and configuration files (including on
 
 ## Connect
 
-Of the three paths at the top ([For AI assistants](#for-ai-assistants--installing-this-repository): ① local edition · ② pair address · ③ server edition), this section details ②, the pair address of this bundle (statutes), for each tool.
+Of the three paths in the [installation guide](#installation-guide-for-people-and-ai-assistants) above (① local edition · ② pair address · ③ server edition), this section details ②, the pair address of this bundle (statutes), for each tool.
 
 **Claude Code** — one line in the terminal (`-s user` makes it available in every folder):
 
@@ -275,18 +284,6 @@ The reply was Article 2 (Definitions) of the Emergency Medical Service Act, verb
 
 The AI decides which tool to call; these are typical cases.
 
-## Measured results
-
-The tool returns the law text as is, so there is no accuracy score. Below are the size of the stored data and the dates the copies were taken.
-
-| Data | Size | Copy taken (checked in results on 2026-11-26) |
-|---|---|---|
-| All current statutes (acts, decrees, rules) | about 5,600 | 2026-11-14 (from the last line of a `law_article` result) |
-| Medical and emergency statutes (with decrees, rules and notices) | 55 | 2026-11-23 (from the last line of a `med_article` result) |
-| Medical-field court cases · statutory interpretations | 3,527 · 1,045 | stored copy |
-
-Weak spots: this is a stored copy, so later amendments arrive with the next copy (the date is at the end of every result). Administrative rules such as notices and directives can be found by name only; their text is included only where attached to the medical and emergency statutes. Court cases and interpretations come only from the stored medical-field set. Results are for reference; the final word belongs to the official text and the responsible authority’s interpretation.
-
 ## Guest and key
 
 |  | Guest (no key) | Key |
@@ -352,6 +349,12 @@ Report security problems as described in [SECURITY.md](SECURITY.md).
 | On 글 다듬기 | [on-tidy](https://github.com/on-munseo/on-tidy) | `/mcp/tidy` |
 | On 근거 | this repository | `/mcp/law` |
 | On폭 글꼴 (fonts) | [napurrin/onpok-fonts](https://github.com/napurrin/onpok-fonts) — free fonts (SIL OFL 1.1) · not needed for the MCP install (optional) | — |
+
+## Measurements and comparisons (reference)
+
+A comparison of coverage with other statute-lookup tools (no scores were measured). The size of the data in this server is in [Measured results](#measured-results) above.
+
+- **Where a statute-lookup MCP that calls the national law API in real time goes further:** local ordinances, the body of administrative rules, and court cases outside medicine. This server uses a downloaded copy, so later amendments arrive with the next copy (the download date is shown at the end of each result).
 
 ## License
 
