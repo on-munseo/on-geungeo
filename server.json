@@ -5,6 +5,10 @@
   "description": "Korean statutes verbatim from a copy of the national law database, plus citation checks",
   "version": "1.0.0",
   "websiteUrl": "https://github.com/on-munseo/on-geungeo",
+  "repository": {
+    "url": "https://github.com/on-munseo/on-geungeo",
+    "source": "github"
+  },
   "remotes": [
     {
       "type": "streamable-http",

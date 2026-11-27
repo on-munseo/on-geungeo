@@ -13,7 +13,7 @@ A remote MCP server that returns Korean statutes verbatim from a copy of the off
 <!-- ai-install -->
 ## For AI assistants — installing this repository
 
-There are three paths; **start with ①**. None needs a key or sign-in. The tools of this repository (On 근거 — statute text and citation checks) are the ② pair address — when simply asked to install, register ②.
+There are three paths; **start with ①**. None needs a key or sign-in. The tools of this repository (On 근거 — statute text and citation checks) are the ② pair address — when simply asked to install, register ②. `plugin/` (the Claude Code plugin) adds ① and ② together, and `server.json` (for the official MCP registry) lists ②.
 
 **① Local edition — documents never leave this computer (first).** Extracts text, masks personal data and runs pre-approval checks, and writes government-style HWPX, makes HWPX files and tidies text, on this computer. The program does not use the internet (check with `on_local_info` after installing — npx asking the npm registry for a newer version at start-up is npx itself; to avoid even that, `npm install -g on-munseo-local` and register the command `on-munseo-local`). Needs Node.js 20+.
 - **Only the AI tool in use** (what an assistant should run — other tools' settings are left alone)
@@ -70,7 +70,7 @@ A tool that lets an AI check the actual text of Korean law instead of relying on
 
 Text comes verbatim from a stored copy of the official national law database (법제처 국가법령정보센터), and every result ends with the date the copy was taken. Common abbreviations (응급의료법, 감염병예방법 …) work.
 
-This repository holds only the setup guide and configuration files (there is no web page here — to use a screen, open the [On 문서 web editor](https://onmunseo.kr/app/)). The engine and server code of the service are not public. The service and its tools speak Korean.
+This repository holds only the setup guide and configuration files (including one small plugin launcher) (there is no web page here — to use a screen, open the [On 문서 web editor](https://onmunseo.kr/app/)). The engine and server code of the service are not public. The service and its tools speak Korean.
 
 ## Comparing with other tools
 
@@ -124,7 +124,7 @@ Of the three paths at the top ([For AI assistants](#for-ai-assistants--installin
 claude mcp add --transport http -s user on-geungeo https://onmunseo.kr/mcp/law
 ```
 
-**Claude Code plugin** — one line (Claude Code 2.1.275 or later):
+**Claude Code plugin** — adds ① the local edition + ② the statute pair (Node.js 20+; works on Windows too — the small launcher `plugin/run-local.mjs` starts npx). One line (Claude Code 2.1.275 or later):
 
 ```bash
 claude plugin install on-geungeo --marketplace on-munseo/on-geungeo
