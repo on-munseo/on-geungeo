@@ -15,7 +15,7 @@ A remote MCP server that returns Korean statutes verbatim from a copy of the off
 
 There are three paths; **start with ①**. None needs a key or sign-in. The tools of this repository (On 근거 — statute text and citation checks) are the ② pair address — when simply asked to install, register ②. `plugin/` (the Claude Code plugin) adds ① and ② together, and `server.json` (for the official MCP registry) lists ②.
 
-**① Local edition — documents never leave this computer (first).** Extracts text, masks personal data and runs pre-approval checks, and writes government-style HWPX, makes HWPX files and tidies text, on this computer. The program does not use the internet (check with `on_local_info` after installing — npx asking the npm registry for a newer version at start-up is npx itself; to avoid even that, `npm install -g on-munseo-local` and register the command `on-munseo-local`). Needs Node.js 20+.
+**① Local edition — documents never leave this computer (first).** Extracts text, compares two versions (old/new table), finds and masks personal data and runs pre-approval checks, and writes government-style HWPX, fills forms, makes HWPX files and tidies text, on this computer. The program does not use the internet (check with `on_local_info` after installing — npx asking the npm registry for a newer version at start-up is npx itself; to avoid even that, `npm install -g on-munseo-local` and register the command `on-munseo-local`). Needs Node.js 20+.
 - **Only the AI tool in use** (what an assistant should run — other tools' settings are left alone)
   ```bash
   claude mcp add -s user on-local -- npx -y on-munseo-local@0.2.1
