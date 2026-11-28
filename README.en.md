@@ -32,7 +32,7 @@ This repository holds only the setup guide and configuration files (including on
 | You search separately for an article’s delegated provisions, penalties and upcoming changes | `med_article` shows them together (for the 55 medical and emergency statutes) |
 | The same term is defined differently in different statutes | See them side by side with `med_terms` and `med_compare` |
 
-**When you do not need it:** When a person reads a single statute, the national law database (law.go.kr) is the most accurate and up to date. This tool exists so that an AI checks the original text.
+For broad searches across all current Korean statutes and article lookup, you can also use the [Ministry of Government Legislation’s official MCP](https://www.law.go.kr/lawmcp) (no authentication, 24 tools; [connection guide](https://open.law.go.kr/LSO/mcp/mcpConnectGuide.do)). The On 문서 server does not call that server; On 근거 provides in-depth lookup across 55 medical and emergency statutes (delegated provisions, amendment reasons, penalties, annexes, court cases and statutory interpretations), citation checks in text, and integration with pre-approval document checks.
 
 <!-- ai-install -->
 ## Installation guide (for people and AI assistants)
